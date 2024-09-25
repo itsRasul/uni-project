@@ -1,0 +1,23 @@
+import {
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  ValidationArguments,
+} from 'class-validator';
+import { ReviewSortType } from '../enums/reviewSortType.enum';
+
+@ValidatorConstraint({ name: 'ReviewSortValidator', async: false })
+export class ReviewSortValidator implements ValidatorConstraintInterface {
+  validate(propertyValue: any, args: ValidationArguments) {
+    // propertyValue => "-createdAt"
+    if (!propertyValue) return true;
+    const propertyValueString = propertyValue.substring(1);
+    // propertyValueString => "createdAt"
+    return Object.values(ReviewSortType).some((sortType) => {
+      return `review.${sortType}` === propertyValueString;
+    });
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `sort option must be one of these: [${Object.values(ReviewSortType).join(', ')}]`;
+  }
+}
